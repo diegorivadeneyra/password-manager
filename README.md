@@ -75,13 +75,13 @@ http://localhost:5173
 
 # Configurar Backend
 
-Abrir otra terminal y entrar a la carpeta backend:
+Abrir una terminal en la raíz del proyecto:
 
 ```bash
-cd backend
+cd password-manager
 ```
 
-Crear entorno virtual:
+## Crear entorno virtual (solo la primera vez)
 
 ### Windows
 
@@ -89,23 +89,45 @@ Crear entorno virtual:
 python -m venv venv
 ```
 
-Activar:
+### Linux / Mac
 
-#### Git Bash
+```bash
+python3 -m venv venv
+```
+
+---
+
+## Activar entorno virtual
+
+### Git Bash
 
 ```bash
 source venv/Scripts/activate
 ```
 
-#### PowerShell
+### PowerShell
 
 ```powershell
 .\venv\Scripts\Activate.ps1
 ```
 
+### CMD
+
+```cmd
+venv\Scripts\activate.bat
+```
+
 ---
 
-Instalar dependencias:
+## Entrar al backend
+
+```bash
+cd backend
+```
+
+---
+
+## Instalar dependencias
 
 ```bash
 pip install -r requirements.txt
@@ -113,7 +135,7 @@ pip install -r requirements.txt
 
 ---
 
-Ejecutar FastAPI:
+## Ejecutar FastAPI
 
 ```bash
 uvicorn main:app --reload
@@ -125,17 +147,12 @@ Backend disponible en:
 http://127.0.0.1:8000
 ```
 
----
-
-# Documentación API
-
-FastAPI genera documentación automática:
+Documentación automática:
 
 ```text
 http://127.0.0.1:8000/docs
 ```
 
----
 
 # Estructura del Proyecto
 
