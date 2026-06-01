@@ -262,3 +262,31 @@ def decrypt_credential(
         "account": credential.account,
         "password": password
     }
+
+@app.delete("/credentials/{credential_id}")
+def delete_credential(
+    credential_id: int,
+    db: Session = Depends(get_db)
+):
+
+    credential = (
+        db.query(models.Credential)
+        .filter(
+            models.Credential.id == credential_id
+        )
+        .first()
+    )
+
+    if not credential:
+        raise HTTPException(
+            status_code=404,
+            detail="Credential not found"
+        )
+
+    db.delete(credential)
+
+    db.commit()
+
+    return {
+        "message": "Deleted"
+    }

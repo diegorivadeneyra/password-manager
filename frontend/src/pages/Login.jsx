@@ -15,6 +15,15 @@ function Login() {
         username,
         password,
       });
+      localStorage.setItem(
+        "user_id",
+        response.data.user_id
+      );
+
+      localStorage.setItem(
+        "username",
+        response.data.username
+      );
       navigate("/dashboard");
       setMessage(response.data.message);
       
