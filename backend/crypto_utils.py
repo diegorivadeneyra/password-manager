@@ -13,7 +13,7 @@ def derive_key(secret: str, crypto_salt: str):
         algorithm=hashes.SHA256(),
         length=32,
         salt=crypto_salt.encode(),
-        iterations=100000,
+        iterations=300000,
         backend=default_backend()
     )
 

@@ -1,6 +1,8 @@
 import secrets
 import models
 import schemas
+import qrcode
+import io
 
 from fastapi import FastAPI
 from fastapi import Depends
@@ -14,10 +16,17 @@ from auth import hash_password
 from auth import verify_password
 
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from crypto_utils import (
     derive_key,
     encrypt_password,
     decrypt_password
+)
+
+from totp_utils import (
+    generate_totp_secret,
+    get_totp_uri,
+    verify_totp
 )
 
 Base.metadata.create_all(bind=engine)
@@ -38,7 +47,6 @@ def root():
         "message": "Password Manager API"
     }
 
-
 @app.post("/register")
 def register(
     user: schemas.UserRegister,
@@ -51,6 +59,21 @@ def register(
         .first()
     )
 
+    existing_email = (
+        db.query(models.User)
+        .filter(
+            models.User.email ==
+            user.email
+        )
+        .first()
+    )
+
+    if existing_email:
+        raise HTTPException(
+            status_code=400,
+            detail="Email already exists"
+        )
+
     if existing_user:
         raise HTTPException(
             status_code=400,
@@ -58,21 +81,22 @@ def register(
         )
 
     password_hash = hash_password(user.password)
-    secret_hash = hash_password(user.secret)
     crypto_salt = secrets.token_hex(16)
-
+    totp_secret = generate_totp_secret()
     new_user = models.User(
         username=user.username,
+        email=user.email,
         password_hash=password_hash,
-        secret_hash=secret_hash,
-        crypto_salt=crypto_salt
+        crypto_salt=crypto_salt,
+        totp_secret=totp_secret
     )
 
     db.add(new_user)
     db.commit()
 
     return {
-        "message": "User created successfully"
+        "message": "User created ",
+        "user_id": new_user.id
     }
 
 @app.post("/login")
@@ -127,17 +151,8 @@ def create_credential(
             detail="User not found"
         )
 
-    if not verify_password(
-        credential.secret,
-        user.secret_hash
-    ):
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid secret"
-        )
-
     key = derive_key(
-        credential.secret,
+        credential.master_password,
         user.crypto_salt
     )
 
@@ -159,31 +174,6 @@ def create_credential(
 
     return {
         "message": "Credential stored"
-    }
-
-@app.get("/crypto-test")
-def crypto_test():
-
-    key = derive_key(
-        "MiPerroToby",
-        "abc123"
-    )
-
-    ciphertext, nonce = encrypt_password(
-        "PasswordGmail123",
-        key
-    )
-
-    recovered = decrypt_password(
-        ciphertext,
-        nonce,
-        key
-    )
-
-    return {
-        "ciphertext": ciphertext,
-        "nonce": nonce,
-        "recovered": recovered
     }
 
 @app.get("/credentials/{user_id}")
@@ -209,16 +199,37 @@ def get_credentials(
         for credential in credentials
     ]
 
-@app.post("/credentials/{credential_id}/decrypt")
+@app.post("/credentials/decrypt")
 def decrypt_credential(
-    credential_id: int,
-    request: schemas.SecretRequest,
+    data: schemas.TOTPVerify,
     db: Session = Depends(get_db)
-): 
+):
+    user = (
+        db.query(models.User)
+        .filter(models.User.id == data.user_id)
+        .first()
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+    
+    if not verify_totp(
+        user.totp_secret,
+        data.code
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid TOTP code"
+        )
+    
     credential = (
         db.query(models.Credential)
         .filter(
-            models.Credential.id == credential_id
+            models.Credential.id ==
+            data.credential_id
         )
         .first()
     )
@@ -228,44 +239,37 @@ def decrypt_credential(
             status_code=404,
             detail="Credential not found"
         )
-    
-    user = (
-        db.query(models.User)
-        .filter(
-            models.User.id == credential.user_id
-        )
-        .first()
-    )
-
-    if not verify_password(
-        request.secret,
-        user.secret_hash
-    ):
+    if credential.user_id != user.id:
         raise HTTPException(
-            status_code=401,
-            detail="Invalid secret"
+            status_code=403,
+            detail="Forbidden"
         )
     
     key = derive_key(
-        request.secret,
+        data.master_password,
         user.crypto_salt
     )
 
-    password = decrypt_password(
-        credential.ciphertext,
-        credential.nonce,
-        key
-    )
+    try:
+        password = decrypt_password(
+            credential.ciphertext,
+            credential.nonce,
+            key
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid master password"
+        )
 
     return {
-        "service": credential.service,
-        "account": credential.account,
         "password": password
     }
 
-@app.delete("/credentials/{credential_id}")
+@app.delete("/credentials/{credential_id}/{user_id}")
 def delete_credential(
     credential_id: int,
+    user_id: int,
     db: Session = Depends(get_db)
 ):
 
@@ -282,6 +286,12 @@ def delete_credential(
             status_code=404,
             detail="Credential not found"
         )
+    
+    if credential.user_id != user_id:
+        raise HTTPException(
+            status_code=403,
+            detail="Forbidden"
+        )
 
     db.delete(credential)
 
@@ -290,3 +300,42 @@ def delete_credential(
     return {
         "message": "Deleted"
     }
+
+@app.get("/totp/{user_id}/qr")
+def get_qr(
+    user_id: int,
+    db: Session = Depends(get_db)
+):
+
+    user = (
+        db.query(models.User)
+        .filter(models.User.id == user_id)
+        .first()
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+
+    uri = get_totp_uri(
+        user.username,
+        user.totp_secret
+    )
+
+    img = qrcode.make(uri)
+
+    buffer = io.BytesIO()
+
+    img.save(
+        buffer,
+        format="PNG"
+    )
+
+    buffer.seek(0)
+
+    return StreamingResponse(
+        buffer,
+        media_type="image/png"
+    )

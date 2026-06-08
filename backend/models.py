@@ -14,12 +14,13 @@ class User(Base):
         nullable=False
     )
 
-    password_hash = Column(
+    email = Column(
         String,
+        unique=True,
         nullable=False
     )
 
-    secret_hash = Column(
+    password_hash = Column(
         String,
         nullable=False
     )
@@ -29,6 +30,17 @@ class User(Base):
         nullable=False
     )   
 
+    totp_secret = Column(
+        String,
+        nullable=False
+    )
+
+    credentials = relationship(
+        "Credential",
+        back_populates="user",
+        cascade="all, delete"
+    )
+
 class Credential(Base):
     __tablename__ = "credentials"
 
@@ -37,6 +49,7 @@ class Credential(Base):
     user_id = Column(
         Integer,
         ForeignKey("users.id"),
+        index=True,
         nullable=False
     )
 
@@ -58,4 +71,9 @@ class Credential(Base):
     nonce = Column(
         String,
         nullable=False
+    )
+
+    user = relationship(
+        "User",
+        back_populates="credentials"
     )
