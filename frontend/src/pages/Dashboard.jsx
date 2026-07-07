@@ -257,28 +257,23 @@ function Dashboard() {
 
           <div className="bg-[#1a1d27] border border-slate-800 rounded-xl shadow-lg p-6">
             <h2 className="text-xl font-semibold mb-4 text-white">
-              🔑 Google Authenticator
+              🔑 Verificación
             </h2>
 
             <input
               type="text"
-              placeholder="Código de 6 dígitos"
+              placeholder="Código TOTP (6 dígitos)"
               value={totpCode}
               onChange={(e) => setTotpCode(e.target.value)}
               className="w-full bg-[#0f111a] border border-slate-700 text-white rounded-lg p-3 focus:outline-none focus:border-cyan-400"
             />
             <input
               type="text"
-              placeholder="Secreto del cliente"
+              placeholder="Secreto de cliente"
               value={clientSecretInput}
               onChange={(e) => setClientSecretInput(e.target.value)}
               className="w-full mt-3 bg-[#0f111a] border border-slate-700 text-white rounded-lg p-3 focus:outline-none focus:border-cyan-400"
             />
-
-            <p className="mt-3 text-sm text-slate-400">
-              Ingresa el código de Google Authenticator y tu secreto de cliente (el que
-              descargaste al registrarte) para crear, editar o revelar contraseñas.
-            </p>
 
           </div>
         </div>

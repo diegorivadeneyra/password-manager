@@ -23,7 +23,6 @@ function Login() {
       setMasterPassword(password);
       navigate('/dashboard');
       setMessage(response.data.message);
-      console.log(response.data);
     } catch (error) {
       setMessage(error.response?.data?.detail || 'Error al iniciar sesión');
     }
@@ -82,17 +81,19 @@ function Login() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span
+            <Link
+              to="/"
               style={{
                 fontSize: '13px',
                 color: '#8b949e',
                 letterSpacing: '0.08em',
                 textTransform: 'uppercase',
                 fontWeight: 500,
+                textDecoration: 'none',
               }}
             >
               PASSWORD VAULT
-            </span>
+            </Link>
             <span style={{ color: '#30363d' }}>›</span>
             <span
               style={{ fontSize: '13px', color: '#e6edf3', fontWeight: 500 }}
@@ -102,7 +103,7 @@ function Login() {
           </div>
 
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            {['AES-256', 'MFA', 'Zero-Knowledge'].map((tag) => (
+            {['AES-256-GCM', 'MFA', 'PBKDF2'].map((tag) => (
               <span
                 key={tag}
                 style={{
@@ -117,6 +118,19 @@ function Login() {
                 {tag}
               </span>
             ))}
+            <Link
+              to="/about"
+              style={{
+                fontSize: '13px',
+                color: '#8b949e',
+                textDecoration: 'none',
+                padding: '6px 14px',
+                borderRadius: '6px',
+                border: '1px solid #30363d',
+              }}
+            >
+              Acerca de
+            </Link>
             <Link
               to="/register"
               style={{
@@ -404,6 +418,7 @@ function Login() {
                 background: '#161b22',
                 border: '1px solid #30363d',
                 borderTop: 'none',
+                borderRadius: '0 0 10px 10px',
                 padding: '0 16px 4px',
               }}
             >
@@ -504,57 +519,6 @@ function Login() {
                   >
                     {status}
                   </span>
-                </div>
-              ))}
-            </div>
-
-            {/* Bottom: crypto params */}
-            <div
-              style={{
-                background: '#161b22',
-                border: '1px solid #30363d',
-                borderTop: 'none',
-                borderRadius: '0 0 10px 10px',
-                padding: '12px 16px',
-                display: 'flex',
-                gap: '12px',
-              }}
-            >
-              {[
-                { label: 'CIFRADO', value: 'AES-256-GCM' },
-                { label: 'KDF', value: 'PBKDF2' },
-                { label: 'SALT', value: '256 bits' },
-              ].map(({ label, value }) => (
-                <div
-                  key={label}
-                  style={{
-                    flex: 1,
-                    background: '#0d1117',
-                    border: '1px solid #21262d',
-                    borderRadius: '6px',
-                    padding: '8px 10px',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '10px',
-                      color: '#8b949e',
-                      letterSpacing: '0.08em',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    {label}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: '#58a6ff',
-                      fontFamily: 'monospace',
-                      fontWeight: 600,
-                    }}
-                  >
-                    {value}
-                  </div>
                 </div>
               ))}
             </div>

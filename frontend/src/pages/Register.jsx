@@ -155,17 +155,19 @@ function Register() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span
+            <Link
+              to="/"
               style={{
                 fontSize: '13px',
                 color: '#8b949e',
                 letterSpacing: '0.08em',
                 textTransform: 'uppercase',
                 fontWeight: 500,
+                textDecoration: 'none',
               }}
             >
               PASSWORD VAULT
-            </span>
+            </Link>
             <span style={{ color: '#30363d' }}>›</span>
             <span
               style={{ fontSize: '13px', color: '#e6edf3', fontWeight: 500 }}
@@ -175,7 +177,7 @@ function Register() {
           </div>
 
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            {['AES-256', 'MFA', 'Zero-Knowledge'].map((tag) => (
+            {['AES-256-GCM', 'MFA', 'PBKDF2'].map((tag) => (
               <span
                 key={tag}
                 style={{
@@ -190,6 +192,19 @@ function Register() {
                 {tag}
               </span>
             ))}
+            <Link
+              to="/about"
+              style={{
+                fontSize: '13px',
+                color: '#8b949e',
+                textDecoration: 'none',
+                padding: '6px 14px',
+                borderRadius: '6px',
+                border: '1px solid #30363d',
+              }}
+            >
+              Acerca de
+            </Link>
             <Link
               to="/login"
               style={{
@@ -532,11 +547,7 @@ function Register() {
             {downloadableSecret && (
               <div className="mt-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
                 <p className="text-yellow-400 font-semibold mb-2">
-                  ⚠️ Guarda este secreto en un lugar seguro
-                </p>
-                <p className="text-sm text-slate-400 mb-3">
-                  Lo necesitarás para acceder a tu bóveda desde otro dispositivo. Si lo pierdes
-                  y no tienes acceso a este navegador, no podrás recuperar tus contraseñas guardadas.
+                  ⚠️ Guarda este secreto — sin él no hay recuperación
                 </p>
                 <p className="break-all text-white bg-[#0f111a] p-2 rounded mb-3 text-sm">
                   {downloadableSecret}
@@ -560,19 +571,9 @@ function Register() {
                   padding: '16px',
                 }}
               >
-                <p
-                  style={{
-                    fontSize: '13px',
-                    color: '#8b949e',
-                    lineHeight: 1.7,
-                    margin: 0,
-                  }}
-                >
-                  Al registrarte recibirás un{' '}
-                  <span style={{ color: '#58a6ff' }}>código QR</span> para
-                  vincular{' '}
-                  <span style={{ color: '#58a6ff' }}>Google Authenticator</span>
-                  . Cada acceso requerirá un código TOTP de 6 dígitos.
+                <p style={{ fontSize: '13px', color: '#8b949e', lineHeight: 1.7, margin: 0 }}>
+                  Requiere <span style={{ color: '#58a6ff' }}>Google Authenticator</span> y un{' '}
+                  <span style={{ color: '#58a6ff' }}>secreto de cliente</span>.
                 </p>
               </div>
             )}
@@ -583,6 +584,7 @@ function Register() {
                 background: '#161b22',
                 border: '1px solid #30363d',
                 borderTop: 'none',
+                borderRadius: '0 0 10px 10px',
                 padding: '0 16px 4px',
               }}
             >
@@ -656,57 +658,6 @@ function Register() {
                   >
                     {status}
                   </span>
-                </div>
-              ))}
-            </div>
-
-            {/* Bottom: crypto params */}
-            <div
-              style={{
-                background: '#161b22',
-                border: '1px solid #30363d',
-                borderTop: 'none',
-                borderRadius: '0 0 10px 10px',
-                padding: '12px 16px',
-                display: 'flex',
-                gap: '12px',
-              }}
-            >
-              {[
-                { label: 'CIFRADO', value: 'AES-256-GCM' },
-                { label: 'KDF', value: 'PBKDF2' },
-                { label: 'MFA', value: 'TOTP · RFC6238' },
-              ].map(({ label, value }) => (
-                <div
-                  key={label}
-                  style={{
-                    flex: 1,
-                    background: '#0d1117',
-                    border: '1px solid #21262d',
-                    borderRadius: '6px',
-                    padding: '8px 10px',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '10px',
-                      color: '#8b949e',
-                      letterSpacing: '0.08em',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    {label}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: '#58a6ff',
-                      fontFamily: 'monospace',
-                      fontWeight: 600,
-                    }}
-                  >
-                    {value}
-                  </div>
                 </div>
               ))}
             </div>

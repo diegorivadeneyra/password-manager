@@ -40,16 +40,10 @@ function Home() {
             >
               PASSWORD VAULT
             </span>
-            <span style={{ color: '#30363d' }}>›</span>
-            <span
-              style={{ fontSize: '13px', color: '#e6edf3', fontWeight: 500 }}
-            >
-              Secure Dashboard
-            </span>
           </div>
 
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            {['AES-256', 'MFA', 'Zero-Knowledge'].map((tag) => (
+            {['AES-256-GCM', 'MFA'].map((tag) => (
               <span
                 key={tag}
                 style={{
@@ -65,9 +59,22 @@ function Home() {
               </span>
             ))}
             <Link
-              to="/login"
+              to="/about"
               style={{
                 marginLeft: '12px',
+                fontSize: '13px',
+                color: '#8b949e',
+                textDecoration: 'none',
+                padding: '6px 14px',
+                borderRadius: '6px',
+                border: '1px solid #30363d',
+              }}
+            >
+              Acerca de
+            </Link>
+            <Link
+              to="/login"
+              style={{
                 fontSize: '13px',
                 color: '#8b949e',
                 textDecoration: 'none',
@@ -97,9 +104,7 @@ function Home() {
       </nav>
 
       {/* Hero */}
-      <section
-        style={{ maxWidth: '1280px', margin: '0 auto', padding: '4rem 2rem' }}
-      >
+      <section style={{ maxWidth: '1280px', margin: '0 auto', padding: '4rem 2rem' }}>
         <div
           style={{
             display: 'grid',
@@ -114,7 +119,7 @@ function Home() {
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
+                gap: '10px',
                 background: '#161b22',
                 border: '1px solid #30363d',
                 borderRadius: '6px',
@@ -122,28 +127,13 @@ function Home() {
                 marginBottom: '1.5rem',
               }}
             >
-              <span
-                style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  background: '#3fb950',
-                  display: 'inline-block',
-                }}
-              ></span>
-              <span
-                style={{
-                  fontSize: '12px',
-                  color: '#8b949e',
-                  letterSpacing: '0.06em',
-                }}
-              >
-                ESTADO ACTUAL
-              </span>
-              <span
-                style={{ fontSize: '12px', color: '#3fb950', fontWeight: 600 }}
-              >
-                Protegido · 0 vulnerabilidades
+              {/* Icono de candado (SVG inline) */}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3fb950" strokeWidth="2.2">
+                <rect x="4" y="11" width="16" height="9" rx="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              <span style={{ fontSize: '12px', color: '#8b949e', letterSpacing: '0.06em' }}>
+                Proyecto de criptografía aplicada
               </span>
             </div>
 
@@ -170,51 +160,9 @@ function Home() {
                 maxWidth: '480px',
               }}
             >
-              Guarda, administra y protege tus credenciales con cifrado avanzado
-              y autenticación multifactor.
+              Guarda y administra tus credenciales cifradas de extremo a
+              extremo, protegidas con autenticación multifactor.
             </p>
-
-            {/* Stats row */}
-            <div
-              style={{ display: 'flex', gap: '1.5rem', marginBottom: '2rem' }}
-            >
-              {[
-                { label: 'ENTRADAS', value: '0' },
-                { label: 'CIFRADO', value: 'AES-256' },
-                { label: 'MFA', value: 'Activo' },
-              ].map(({ label, value }) => (
-                <div
-                  key={label}
-                  style={{
-                    background: '#161b22',
-                    border: '1px solid #30363d',
-                    borderRadius: '8px',
-                    padding: '12px 16px',
-                    minWidth: '80px',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '11px',
-                      color: '#8b949e',
-                      letterSpacing: '0.08em',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    {label}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '16px',
-                      fontWeight: 600,
-                      color: '#58a6ff',
-                    }}
-                  >
-                    {value}
-                  </div>
-                </div>
-              ))}
-            </div>
 
             <div style={{ display: 'flex', gap: '12px' }}>
               <Link
@@ -247,14 +195,25 @@ function Home() {
               >
                 Iniciar Sesión
               </Link>
+              <Link
+                to="/about"
+                style={{
+                  background: 'transparent',
+                  color: '#8b949e',
+                  padding: '10px 20px',
+                  borderRadius: '6px',
+                  fontWeight: 500,
+                  fontSize: '14px',
+                  textDecoration: 'none',
+                }}
+              >
+                Ver stack técnico →
+              </Link>
             </div>
           </div>
 
-          {/* Right: Dashboard panel */}
-          <div
-            style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
-          >
-            {/* Panel header */}
+          {/* Right: Dashboard preview (mock) */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div
               style={{
                 background: '#161b22',
@@ -278,62 +237,28 @@ function Home() {
                 >
                   VAULT DASHBOARD
                 </div>
-                <div
-                  style={{
-                    fontSize: '15px',
-                    fontWeight: 600,
-                    color: '#e6edf3',
-                    marginTop: '2px',
-                  }}
-                >
-                  Mapa principal de credenciales
+                <div style={{ fontSize: '15px', fontWeight: 600, color: '#e6edf3', marginTop: '2px' }}>
+                  Vista previa
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: '6px' }}>
-                {['AES', 'MFA', 'TLS'].map((tag, i) => (
-                  <span
-                    key={tag}
-                    style={{
-                      fontSize: '11px',
-                      padding: '3px 10px',
-                      borderRadius: '20px',
-                      border: `1px solid ${i === 2 ? '#58a6ff' : '#30363d'}`,
-                      color: i === 2 ? '#58a6ff' : '#8b949e',
-                      background:
-                        i === 2 ? 'rgba(88,166,255,0.1)' : 'transparent',
-                      fontWeight: i === 2 ? 600 : 400,
-                    }}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
+              <span
+                style={{
+                  fontSize: '11px',
+                  padding: '3px 10px',
+                  borderRadius: '20px',
+                  border: '1px solid #30363d',
+                  color: '#8b949e',
+                }}
+              >
+                Demo
+              </span>
             </div>
 
-            {/* Credential entries */}
             {[
-              {
-                name: 'GitHub',
-                user: 'usuario@github.com',
-                label: 'Inicio',
-                status: 'Verificado',
-                color: '#3fb950',
-              },
-              {
-                name: 'Gmail',
-                user: 'usuario@gmail.com',
-                label: 'Reducción',
-                status: 'MFA activo',
-                color: '#d29922',
-              },
-              {
-                name: 'Steam',
-                user: 'usuario@steam.com',
-                label: 'Shift',
-                status: 'Seguro',
-                color: '#58a6ff',
-              },
-            ].map(({ name, user, label, status, color }) => (
+              { name: 'GitHub', user: 'usuario@github.com', status: 'Actualizado hace 2 días', color: '#3fb950' },
+              { name: 'Gmail', user: 'usuario@gmail.com', status: 'MFA activo', color: '#d29922' },
+              { name: 'Steam', user: 'usuario@steam.com', status: 'Sin cambios', color: '#58a6ff' },
+            ].map(({ name, user, status, color }) => (
               <div
                 key={name}
                 style={{
@@ -347,23 +272,7 @@ function Home() {
                 }}
               >
                 <div>
-                  <div
-                    style={{
-                      fontSize: '11px',
-                      color: '#8b949e',
-                      letterSpacing: '0.08em',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    ESTADO
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      fontWeight: 600,
-                      color: '#e6edf3',
-                    }}
-                  >
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: '#e6edf3' }}>
                     {name}
                   </div>
                   <div
@@ -376,87 +285,43 @@ function Home() {
                       borderRadius: '4px',
                       marginTop: '6px',
                       border: '1px solid #21262d',
+                      display: 'inline-block',
                     }}
                   >
                     {user}
                   </div>
                 </div>
-                <div
+                <span
                   style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-end',
-                    gap: '6px',
+                    fontSize: '11px',
+                    padding: '3px 10px',
+                    borderRadius: '20px',
+                    border: `1px solid ${color}40`,
+                    color,
+                    background: `${color}15`,
+                    fontWeight: 600,
                   }}
                 >
-                  <span
-                    style={{
-                      fontSize: '11px',
-                      padding: '3px 10px',
-                      borderRadius: '20px',
-                      border: `1px solid ${color}40`,
-                      color: color,
-                      background: `${color}15`,
-                      fontWeight: 600,
-                    }}
-                  >
-                    {label}
-                  </span>
-                  <span style={{ fontSize: '11px', color: '#8b949e' }}>
-                    {status}
-                  </span>
-                </div>
+                  {status}
+                </span>
               </div>
             ))}
 
-            {/* Bottom: FIRST/FOLLOW mini panel */}
             <div
               style={{
                 background: '#161b22',
                 border: '1px solid #30363d',
                 borderRadius: '0 0 10px 10px',
                 padding: '12px 16px',
-                display: 'flex',
-                gap: '12px',
+                textAlign: 'center',
               }}
             >
-              {[
-                { label: 'CIFRADO', value: 'AES-256-GCM' },
-                { label: 'ITERACIONES PBKDF2', value: '600,000' },
-                { label: 'SALT', value: '256 bits' },
-              ].map(({ label, value }) => (
-                <div
-                  key={label}
-                  style={{
-                    flex: 1,
-                    background: '#0d1117',
-                    border: '1px solid #21262d',
-                    borderRadius: '6px',
-                    padding: '8px 10px',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '10px',
-                      color: '#8b949e',
-                      letterSpacing: '0.08em',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    {label}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: '#58a6ff',
-                      fontFamily: 'monospace',
-                      fontWeight: 600,
-                    }}
-                  >
-                    {value}
-                  </div>
-                </div>
-              ))}
+              <Link
+                to="/about"
+                style={{ fontSize: '12px', color: '#58a6ff', textDecoration: 'none' }}
+              >
+                Ver detalles del cifrado →
+              </Link>
             </div>
           </div>
         </div>
