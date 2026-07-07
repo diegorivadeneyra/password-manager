@@ -11,6 +11,7 @@ function Register() {
   const [registered, setRegistered] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [downloadableSecret, setDownloadableSecret] = useState('');
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -20,6 +21,9 @@ function Register() {
         email,
         password,
       });
+      const clientSecret = response.data.client_secret;
+      //localStorage.setItem('client_secret', clientSecret);
+      setDownloadableSecret(clientSecret);
       setMessage(response.data.message);
       setIsError(false);
       setUsername('');
@@ -31,6 +35,16 @@ function Register() {
       setIsError(true);
       setMessage(error.response?.data?.detail || 'Error al registrar usuario');
     }
+  };
+
+  const handleDownloadSecret = () => {
+    const blob = new Blob([downloadableSecret], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'client_secret.txt';
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const inputStyle = {
@@ -513,6 +527,26 @@ function Register() {
                     }}
                   />
                 </div>
+              </div>
+            )}
+            {downloadableSecret && (
+              <div className="mt-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                <p className="text-yellow-400 font-semibold mb-2">
+                  ⚠️ Guarda este secreto en un lugar seguro
+                </p>
+                <p className="text-sm text-slate-400 mb-3">
+                  Lo necesitarás para acceder a tu bóveda desde otro dispositivo. Si lo pierdes
+                  y no tienes acceso a este navegador, no podrás recuperar tus contraseñas guardadas.
+                </p>
+                <p className="break-all text-white bg-[#0f111a] p-2 rounded mb-3 text-sm">
+                  {downloadableSecret}
+                </p>
+                <button
+                  onClick={handleDownloadSecret}
+                  className="bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-bold px-3 py-2 rounded-lg"
+                >
+                  ⬇️ Descargar como archivo
+                </button>
               </div>
             )}
 

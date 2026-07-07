@@ -7,18 +7,12 @@ export function AuthProvider({
   children
 }) {
 
-  const [
-    masterPassword,
-    setMasterPassword
-  ] = useState("");
+  const [masterPassword, setMasterPassword] = useState("");
 
   return (
 
     <AuthContext.Provider
-      value={{
-        masterPassword,
-        setMasterPassword
-      }}
+      value={{ masterPassword, setMasterPassword }}
     >
 
       {children}

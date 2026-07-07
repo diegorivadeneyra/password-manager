@@ -17,6 +17,7 @@ function Login() {
     e.preventDefault();
     try {
       const response = await api.post('/login', { username, password });
+      localStorage.setItem('access_token', response.data.access_token);
       localStorage.setItem('user_id', response.data.user_id);
       localStorage.setItem('username', response.data.username);
       setMasterPassword(password);
