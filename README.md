@@ -164,10 +164,3 @@ password-manager/
 │       └── services/        # Cliente Axios con interceptor JWT
 └── README.md
 ```
-
-## Trabajo futuro
-
-- Derivación de llave y cifrado/descifrado completamente en el cliente (Web Crypto API) para lograr *zero-knowledge* real.
-- Rate limiting en autenticación.
-- Análisis estático de seguridad automatizado (bandit) integrado en CI.
-- Envío del `client_secret` por correo como alternativa a la descarga manual.
